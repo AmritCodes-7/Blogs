@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Delete Story
+{% endblock title %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Delete Confirmation Card -->
+    <div class="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+        <!-- Warning Icon -->
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-center mb-4 text-gray-900">Delete this story?</h1>
+        
+        <!-- Story Preview -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+            <h2 class="font-bold text-lg text-gray-900 mb-2">{{ object.title }}</h2>
+            <p class="text-gray-600 text-sm line-clamp-3">{{ object.body|striptags|truncatewords:30 }}</p>
+            <p class="text-xs text-gray-500 mt-2">
+                Created on {{ object.created_at|date:"M d, Y" }}
+            </p>
+        </div>
+
+        <!-- Warning Message -->
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700">
+                        <strong>Warning:</strong> This action cannot be undone. Your story will be permanently deleted.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Form -->
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <a href="{% url 'read_more_page' object.id %}" 
+                   class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition text-center font-medium">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition font-medium">
+                    Delete Story
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500">
+            Need help? <a href="#" class="text-blue-600 hover:underline">Contact support</a>
+        </p>
+    </div>
+</div>
+{% endblock content %}

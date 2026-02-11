@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | Blogs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
+            Create a new account
+        </h2>
+
+        <!-- Signup Form -->
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <!-- Show non-field errors -->
+            {% if form.non_field_errors %}
+                <div class="bg-red-100 text-red-700 p-3 rounded">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- Loop through fields -->
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ field.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                Sign Up
+            </button>
+        </form>
+
+        <!-- Login Link -->
+        <p class="text-sm text-center text-gray-600 mt-4">
+            Already have an account?
+            <a href="{% url 'login_page' %}" class="text-blue-600 hover:underline">Login</a>
+        </p>
+    </div>
+
+</body>
+</html>
