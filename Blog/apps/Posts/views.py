@@ -59,6 +59,11 @@ class ReadMoreDetailView(DetailView):
     def get_queryset(self):
         return Blogs.objects.select_related("author")
 
+    def get_object(self):
+        slug = self.kwargs.get("slug")
+        queryset = self.get_queryset()
+        return queryset.get(slug=slug)
+
 
 # ----------------- Blog Create -----------------
 class BlogCreateView(LoginRequiredMixin, CreateView):

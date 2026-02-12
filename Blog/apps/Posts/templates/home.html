@@ -14,7 +14,7 @@
 
     <!-- Blog Cards -->
     <div class="border-t border-gray-200">
-        {% for blog in page_obj %}
+        {% for blog in blogs %}
             <!-- Medium-style Blog Card -->
             <article class="border-b border-gray-200 py-8 flex justify-between gap-8 hover:opacity-80 transition-opacity">
                 <!-- Left: Content -->
@@ -30,7 +30,7 @@
                     </div>
 
                     <!-- Title and Description -->
-                    <a href="{% url 'read_more_page' blog.id %}" class="block group">
+                    <a href="{% url 'read_more_page' blog.slug %}" class="block group">
                         <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 group-hover:text-gray-700 line-clamp-2">
                             {{ blog.title }}
                         </h2>
@@ -52,7 +52,7 @@
                     <!-- Featured Image (if available) -->
                     {% if blog.featured_image %}
                     <div class="w-32 h-32 md:w-40 md:h-40">
-                        <a href="{% url 'read_more_page' blog.id %}">
+                        <a href="{% url 'read_more_page' blog.slug %}">
                             <img src="{{ blog.featured_image.url }}" 
                                  alt="{{ blog.title }}" 
                                  class="w-full h-full object-cover rounded"

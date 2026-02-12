@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "apps.Posts",
     "apps.accounts",
-    "django_quill",
     "django_summernote",
 ]
 
@@ -132,3 +131,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Optional: Configure maximum upload size (e.g., 5MB)
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB in bytes
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
+
+SUMMERNOTE_CONFIG = {
+    "iframe": True,  # Recommended for Django 5.x
+    "width": "100%",  # editor width
+    "height": "400",  # editor height
+    "toolbar": [
+        ["style", ["bold", "italic", "underline", "clear"]],
+        ["para", ["ul", "ol", "paragraph"]],
+        ["insert", ["link", "picture", "video"]],
+    ],
+}

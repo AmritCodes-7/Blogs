@@ -1,4 +1,5 @@
 from django import forms
+from django_summernote.widgets import SummernoteWidget
 from .models import Blogs
 
 
@@ -14,14 +15,7 @@ class BlogCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             ),
-            "body": forms.Textarea(
-                attrs={
-                    "class": "w-full text-lg md:text-xl leading-relaxed border-none outline-none focus:ring-0 placeholder-gray-300 bg-transparent resize-none py-2",
-                    "rows": 20,
-                    "placeholder": "Tell your story...",
-                    "autocomplete": "off",
-                }
-            ),
+            "body": SummernoteWidget(),  # no attrs with styles
             "featured_image": forms.FileInput(
                 attrs={
                     "class": "hidden",
@@ -33,12 +27,9 @@ class BlogCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Remove default Django labels
         for field in self.fields:
             self.fields[field].label = ""
             self.fields[field].required = False
-
-        # Make title and body required but remove asterisk
         self.fields["title"].required = True
         self.fields["body"].required = True
 
