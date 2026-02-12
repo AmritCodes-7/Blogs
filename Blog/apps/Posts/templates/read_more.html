@@ -3,9 +3,100 @@
 {% block title %}{{ blog.title }}{% endblock title %}
 
 {% block content %}
-<div class="bg-white shadow p-6 rounded">
-    <h2 class="text-2xl font-bold mb-4">{{ blog.title }}</h2>
-    <p class="text-gray-600 mb-2">By {{ blog.author.username }} | {{ blog.created_at|date:"M d, Y" }}</p>
-    <p class="text-gray-800">{{ blog.body }}</p>
-</div>
+<article class="max-w-3xl mx-auto px-4 py-12">
+    <!-- Title -->
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+        {{ blog.title }}
+    </h1>
+
+    <!-- Author Info -->
+    <div class="flex items-center space-x-3 mb-8 pb-8 border-b border-gray-200">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-lg font-semibold">
+            {{ blog.author.username|first|upper }}
+        </div>
+        <div>
+            <a href="{% url 'my_blogs_list_page' blog.author.username blog.author.id %}" 
+               class="text-base font-medium text-gray-900 hover:underline">
+                {{ blog.author.username }}
+            </a>
+            <div class="text-sm text-gray-500">
+                {{ blog.created_at|date:"M d, Y" }} · {{ blog.body|wordcount }} min read
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Image (Fixed Size) -->
+    {% if blog.featured_image %}
+    <div class="w-full h-96 mb-12 rounded-lg overflow-hidden bg-gray-100">
+        <img src="{{ blog.featured_image.url }}" 
+             alt="{{ blog.title }}" 
+             class="w-full h-full object-cover"
+             onerror="this.parentElement.style.display='none'">
+    </div>
+    {% endif %}
+
+    <!-- Blog Content (Rich Text with Images) -->
+    <div class="prose prose-lg max-w-none">
+        <div class="blog-content text-gray-800 text-lg leading-relaxed">
+            {{ blog.body|safe }}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-12 pt-8 border-t border-gray-200 flex items-center justify-between">
+        <a href="{% url 'home_page' %}" 
+           class="flex items-center text-gray-600 hover:text-gray-900 transition">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to stories
+        </a>
+
+        {% if request.user == blog.author %}
+        <div class="flex gap-3">
+            <a href="{% url 'blog_update_page' blog.id %}" 
+               class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition">
+                Edit story
+            </a>
+            <a href="{% url 'blog_delete_page' blog.id %}" 
+               class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-full hover:bg-red-100 transition">
+                Delete story
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</article>
+
+<style>
+    /* Style for embedded images in blog content */
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+    
+    .blog-content p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .blog-content h1, .blog-content h2, .blog-content h3 {
+        font-weight: bold;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .blog-content ul, .blog-content ol {
+        margin-left: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .blog-content blockquote {
+        border-left: 4px solid #e5e7eb;
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: #6b7280;
+        font-style: italic;
+    }
+</style>
 {% endblock content %}

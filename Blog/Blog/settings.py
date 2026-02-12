@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "apps.Posts",
     "apps.accounts",
+    "django_quill",
+    "django_summernote",
 ]
 
 MIDDLEWARE = [
@@ -121,3 +124,11 @@ STATIC_URL = "static/"
 LOGIN_REDIRECT_URL = "home_page"
 LOGOUT_REDIRECT_URL = "home_page"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Media files configuration
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Optional: Configure maximum upload size (e.g., 5MB)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB in bytes
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880

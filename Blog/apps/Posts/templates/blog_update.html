@@ -1,133 +1,197 @@
 {% extends "base.html" %}
 
-{% block title %}
-    Write a Story
-{% endblock title %}
+{% block title %}Edit Story{% endblock title %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
-    <form method="post" enctype="multipart/form-data" class="bg-white">
-        {% csrf_token %}
-
-        <!-- Action Bar -->
-        <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-            <a href="{% url 'home_page' %}" class="text-gray-600 hover:text-gray-900 transition">
+<div class="min-h-screen bg-white">
+    <!-- Header -->
+    <div class="border-b border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="{% url 'read_more_page' blog.id %}" class="text-gray-600 hover:text-gray-900 flex items-center gap-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
+                <span class="font-medium">Cancel</span>
             </a>
-            <div class="flex items-center space-x-3">
-                <button type="submit" name="publish" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition">
-                    Publish
-                </button>
-            </div>
+            <button type="submit" form="blog-form" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition">
+                Update
+            </button>
         </div>
+    </div>
 
-        <!-- Featured Image Preview & Upload -->
-        <div class="mb-8">
-            <div id="image-preview-container" class="hidden mb-6">
-                <div class="relative group">
-                    <img id="image-preview" src="" alt="Featured image preview" class="w-full h-96 object-cover rounded-lg">
-                    <button type="button" onclick="removeImage()" class="absolute top-4 right-4 p-2 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <form method="post" enctype="multipart/form-data" id="blog-form" class="space-y-8">
+            {% csrf_token %}
+
+            <!-- Featured Image Section -->
+            <div class="relative group">
+                {% if blog.featured_image %}
+                <div id="image-preview" class="rounded-lg overflow-hidden mb-6">
+                    <img id="preview-img" src="{{ blog.featured_image.url }}" alt="Featured image preview" class="w-full h-auto max-h-96 object-cover">
+                    <button type="button" id="remove-image" class="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition">
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
+                <button type="button" id="upload-trigger" class="hidden w-full py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition text-center group">
+                {% else %}
+                <div id="image-preview" class="hidden rounded-lg overflow-hidden mb-6">
+                    <img id="preview-img" src="" alt="Featured image preview" class="w-full h-auto max-h-96 object-cover">
+                    <button type="button" id="remove-image" class="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition">
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <button type="button" id="upload-trigger" class="w-full py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition text-center group">
+                {% endif %}
+                    <svg class="w-12 h-12 mx-auto text-gray-400 group-hover:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <p class="text-gray-600 font-medium">Change featured image</p>
+                    <p class="text-sm text-gray-400 mt-1">Click to upload</p>
+                </button>
+
+                {{ form.featured_image }}
             </div>
 
-            <label for="featured-image-input" id="image-upload-label" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 cursor-pointer group">
-                <svg class="w-6 h-6 group-hover:text-gray-900 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <span class="text-sm font-medium">Add a cover image</span>
-            </label>
-            {{ form.featured_image }}
-        </div>
+            <!-- Title -->
+            <div>
+                <input type="text" 
+                       name="title" 
+                       value="{{ blog.title }}"
+                       placeholder="Title" 
+                       required
+                       class="w-full text-4xl md:text-5xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 bg-transparent py-2">
+                {% if form.title.errors %}
+                    <div class="mt-2 text-red-600 text-sm">
+                        {{ form.title.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-        <!-- Title Field -->
-        <div class="mb-6">
-            {{ form.title }}
-            {% if form.title.errors %}
-                <div class="mt-2 text-sm text-red-600">
-                    {{ form.title.errors }}
-                </div>
-            {% endif %}
-        </div>
+            <!-- Summernote Editor -->
+            <div>
+                <textarea name="body" id="summernote">{{ blog.body }}</textarea>
+                {% if form.body.errors %}
+                    <div class="mt-2 text-red-600 text-sm">
+                        {{ form.body.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
 
-        <!-- Body Field -->
-        <div class="mb-6">
-            {{ form.body }}
-            {% if form.body.errors %}
-                <div class="mt-2 text-sm text-red-600">
-                    {{ form.body.errors }}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Toolbar (Optional - Medium-style) -->
-        <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full shadow-lg flex items-center space-x-4 opacity-0 hover:opacity-100 transition">
-            <button type="button" class="hover:text-gray-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                </svg>
-            </button>
-            <span class="text-xs text-gray-400">{{ form.body.value|default:"0"|length }}/10000</span>
-        </div>
-    </form>
+            <!-- Character Count -->
+            <div class="text-sm text-gray-400 text-right">
+                <span id="char-count">0</span> characters
+            </div>
+        </form>
+    </div>
 </div>
 
+<!-- jQuery (Required for Summernote) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Summernote CSS -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+
+<!-- Summernote JS -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+<style>
+    .note-editor.note-frame {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+    
+    .note-toolbar {
+        background-color: #fafafa;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 10px;
+    }
+    
+    .note-editable {
+        font-size: 18px;
+        line-height: 1.8;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        min-height: 400px;
+        padding: 20px;
+    }
+</style>
+
 <script>
-    // Image preview functionality
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            placeholder: 'Tell your story...',
+            height: 400,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ],
+            callbacks: {
+                onImageUpload: function(files) {
+                    for (let i = 0; i < files.length; i++) {
+                        uploadImage(files[i]);
+                    }
+                },
+                onChange: function(contents, $editable) {
+                    const text = $('#summernote').summernote('code').replace(/<[^>]*>/g, '');
+                    $('#char-count').text(text.length);
+                }
+            }
+        });
+
+        function uploadImage(file) {
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                const image = $('<img>').attr('src', reader.result);
+                $('#summernote').summernote('insertNode', image[0]);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        const initialText = $('#summernote').summernote('code').replace(/<[^>]*>/g, '');
+        $('#char-count').text(initialText.length);
+    });
+
+    // Featured Image Upload
+    const uploadTrigger = document.getElementById('upload-trigger');
     const imageInput = document.getElementById('featured-image-input');
     const imagePreview = document.getElementById('image-preview');
-    const imagePreviewContainer = document.getElementById('image-preview-container');
-    const imageUploadLabel = document.getElementById('image-upload-label');
+    const previewImg = document.getElementById('preview-img');
+    const removeImageBtn = document.getElementById('remove-image');
 
-    imageInput?.addEventListener('change', function(e) {
+    uploadTrigger.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                imagePreviewContainer.classList.remove('hidden');
-                imageUploadLabel.classList.add('hidden');
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+                uploadTrigger.classList.add('hidden');
             };
             reader.readAsDataURL(file);
         }
     });
 
-    function removeImage() {
+    removeImageBtn.addEventListener('click', () => {
         imageInput.value = '';
-        imagePreview.src = '';
-        imagePreviewContainer.classList.add('hidden');
-        imageUploadLabel.classList.remove('hidden');
-    }
-
-    // Auto-resize textarea
-    const textarea = document.querySelector('textarea');
-    textarea?.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-    });
-
-    // Character count
-    textarea?.addEventListener('input', function() {
-        const charCount = this.value.length;
-        // Update character count display if needed
+        previewImg.src = '';
+        imagePreview.classList.add('hidden');
+        uploadTrigger.classList.remove('hidden');
     });
 </script>
-
-<style>
-    /* Remove default form styling */
-    input:focus, textarea:focus {
-        outline: none;
-        box-shadow: none;
-    }
-    
-    /* Auto-resize textarea */
-    textarea {
-        overflow-y: hidden;
-    }
-</style>
 {% endblock content %}
