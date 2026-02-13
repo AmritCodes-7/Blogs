@@ -49,6 +49,11 @@ class HomeListView(BlogSortMixin, ListView):
     context_object_name = "blogs"
     paginate_by = 3
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_home"] = True
+        return context
+
 
 # ----------------- Blog Detail -----------------
 class ReadMoreDetailView(DetailView):
@@ -94,6 +99,7 @@ class MyBlogsListView(BlogSortMixin, LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["blogs_author"] = self.kwargs["username"]
         context["no_author_sort"] = True
+        context["is_home"] = False
         return context
 
 
@@ -103,6 +109,7 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     form_class = BlogCreateForm
     template_name = "blog_update.html"
     success_url = reverse_lazy("home_page")
+    context_object_name = "blog"
     login_url = "login_page"
 
     def get_queryset(self):

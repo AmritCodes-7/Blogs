@@ -8,8 +8,15 @@
 <div class="max-w-4xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <h1 class="text-5xl font-bold mb-2">Latest Blogs</h1>
-        <p class="text-gray-600">Discover stories, thinking, and expertise from writers on any topic.</p>
+        
+        {% if is_home %}    
+            <h1 class="text-5xl font-bold mb-2">Latest Blogs</h1>
+            <p class="text-gray-600">Discover stories, thinking, and expertise from writers on any topic.</p>
+        {% else %}
+            <h1 class="text-5xl font-bold mb-2">Your Blogs</h1>
+            <p class="text-gray-600"> Stories you've written and shared.</p>
+        {% endif %}
+            
     </div>
 
     <!-- Blog Cards -->

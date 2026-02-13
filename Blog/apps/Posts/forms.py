@@ -1,5 +1,4 @@
 from django import forms
-from django_summernote.widgets import SummernoteWidget
 from .models import Blogs
 
 
@@ -15,7 +14,7 @@ class BlogCreateForm(forms.ModelForm):
                     "autocomplete": "off",
                 }
             ),
-            "body": SummernoteWidget(),  # no attrs with styles
+            # CKEditor5Field provides its own widget
             "featured_image": forms.FileInput(
                 attrs={
                     "class": "hidden",
@@ -27,9 +26,13 @@ class BlogCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Remove labels
         for field in self.fields:
             self.fields[field].label = ""
             self.fields[field].required = False
+
+        # Explicit required fields
         self.fields["title"].required = True
         self.fields["body"].required = True
 
@@ -49,4 +52,4 @@ class BlogCreateForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Your story is too short. Write at least 50 characters."
             )
-        return body.strip()
+        return body

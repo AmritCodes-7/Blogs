@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django_summernote.fields import SummernoteTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.text import slugify
 
 
 class Blogs(models.Model):
     title = models.CharField(max_length=200)
-    body = SummernoteTextField()
+    body = CKEditor5Field("Content", config_name="default")
     featured_image = models.ImageField(
         upload_to="blog_images/",
         blank=True,
