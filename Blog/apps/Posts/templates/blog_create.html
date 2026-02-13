@@ -1,7 +1,7 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Write your story{% endblock title %}
-
 {% block content %}
 <div class="min-h-screen bg-white">
     <!-- Header -->
@@ -9,11 +9,13 @@
         <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
             <a href="{% url 'home_page' %}" class="text-gray-600 hover:text-gray-900 flex items-center gap-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 <span class="font-medium">Back</span>
             </a>
-            <button type="submit" form="blog-form" class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition">
+            <button type="submit" form="blog-form"
+                class="px-6 py-2 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition">
                 Publish
             </button>
         </div>
@@ -33,32 +35,20 @@
             <div>
                 {{ form.title }}
                 {% if form.title.errors %}
-                    <div class="mt-2 text-red-600 text-sm">{{ form.title.errors.0 }}</div>
+                <div class="mt-2 text-red-600 text-sm">{{ form.title.errors.0 }}</div>
                 {% endif %}
             </div>
 
             <!-- CKEditor 5 Body -->
             <div>
+                {{form.media}}
+
                 {{ form.body }}
                 {% if form.body.errors %}
-                    <div class="mt-2 text-red-600 text-sm">{{ form.body.errors.0 }}</div>
+                <div class="mt-2 text-red-600 text-sm">{{ form.body.errors.0 }}</div>
                 {% endif %}
             </div>
         </form>
     </div>
 </div>
-
-<!-- CKEditor 5 CDN -->
-<script>
-    ClassicEditor
-        .create(document.querySelector('#id_body'), {
-            placeholder: 'Tell your story...',
-            toolbar: [
-                'heading', '|', 'bold', 'italic', 'underline', 'link', 
-                'bulletedList', 'numberedList', '|',
-                'insertTable', 'blockQuote', 'undo', 'redo', 'imageUpload'
-            ],
-        })
-        .catch(error => { console.error(error); });
-</script>
 {% endblock content %}
