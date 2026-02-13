@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django_ckeditor_5.fields import CKEditor5Field
 from django.utils.text import slugify
 
+class PublishedStatus(models.TextChoices):
+    PUBLISHED = "published", "Published"
+    DRAFT = "draft", "Draft"
+
 
 class Blogs(models.Model):
     title = models.CharField(max_length=200)
@@ -17,14 +21,15 @@ class Blogs(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(unique=True, blank=True, max_length=250)
+    publish_status = models.CharField(choices=PublishedStatus.choices, max_length=9, default=PublishedStatus.PUBLISHED)
 
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Blog"
         verbose_name_plural = "Blogs"
         indexes = [
-            models.Index(fields=["-created_at"]),
             models.Index(fields=["slug"]),
+            # models.Index(fields=["slug"]),
         ]
 
     def save(self, *args, **kwargs):

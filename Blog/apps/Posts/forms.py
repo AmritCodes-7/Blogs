@@ -6,7 +6,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 class BlogCreateForm(forms.ModelForm):
     class Meta:
         model = Blogs
-        fields = ["title", "body", "featured_image"]
+        fields = ["title", "body", "featured_image", "publish_status"]
         widgets = {
             "title": forms.TextInput(
                 attrs={

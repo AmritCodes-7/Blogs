@@ -22,6 +22,14 @@
             </a>
             <div class="text-sm text-gray-500">
                 {{ blog.created_at|date:"M d, Y" }} · {{ blog.body|wordcount }} min read
+                <span
+                    class="inline-flex items-center rounded-md
+                    {% if blog.publish_status == 'published' %}
+                    bg-green-200
+                    {% elif blog.publish_status == 'draft' %}
+                    bg-yellow-200
+                    {% endif %}
+                    px-2 py-1 text-xs font-medium text-white-400 inset-ring inset-ring-gray-400/20">{{blog.publish_status|capfirst}}</span>
             </div>
         </div>
     </div>

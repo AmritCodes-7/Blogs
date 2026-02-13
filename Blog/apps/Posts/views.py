@@ -10,7 +10,7 @@ from django.views.generic import (
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Blogs
+from .models import Blogs, PublishedStatus
 from .forms import BlogCreateForm
 
 
@@ -39,7 +39,7 @@ class BlogSortMixin:
         Base queryset with author prefetching.
         Override in subclasses if needed.
         """
-        return Blogs.objects.select_related("author")
+        return Blogs.objects.select_related("author").filter(publish_status=PublishedStatus.PUBLISHED)
 
 
 # ----------------- Home / Blog List -----------------
@@ -108,9 +108,13 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blogs
     form_class = BlogCreateForm
     template_name = "blog_update.html"
-    success_url = reverse_lazy("home_page")
+    success_url = reverse_lazy("read_more_page")
     context_object_name = "blog"
     login_url = "login_page"
+
+    def get_success_url(self) -> str:
+        obj: Blogs = self.get_object()
+        return reverse_lazy("read_more_page", args=[obj.slug])
 
     def get_queryset(self):
         # Only allow current user to update their own blogs
