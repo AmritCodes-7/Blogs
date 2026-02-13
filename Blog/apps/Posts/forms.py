@@ -15,7 +15,7 @@ class BlogCreateForm(forms.ModelForm):
                 }
             ),
             "body": CKEditor5Widget(
-                attrs={"class": "ckeditor-field"},
+                # attrs={"class": "ckeditor-field"},
                 config_name="extends",
             ),
             "featured_image": forms.FileInput(

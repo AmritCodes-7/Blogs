@@ -13,20 +13,31 @@ class Blogs(models.Model):
         null=True,
         help_text="Upload a featured image for your blog post",
     )
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blogs")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=250)
 
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Blog"
         verbose_name_plural = "Blogs"
+        indexes = [
+            models.Index(fields=["-created_at"]),
+            models.Index(fields=["slug"]),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
-        return super().save(*args, **kwargs)
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            # Handle duplicate slugs
+            while Blogs.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
