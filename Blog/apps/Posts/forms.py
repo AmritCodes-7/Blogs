@@ -19,7 +19,7 @@ class BlogCreateForm(forms.ModelForm):
                 config_name="extends",
             ),
             "featured_image": forms.FileInput(
-                attrs={"class": "hidden", "accept": "image/*"}
+                attrs={"class": "hidden", "id": "featured-image-input", "accept": "image/*"}
             ),
         }
 
