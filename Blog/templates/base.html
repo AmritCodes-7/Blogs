@@ -142,7 +142,14 @@
                 });
             }
         });
+
+        const calculateDisplayWPM = (wordCount) => {
+            document.querySelector(".read-time").innerText = Math.ceil(Number(wordCount) / 230); // min
+        }
+
     </script>
+    {% block script %}
+    {% endblock %}
 </body>
 
 </html>

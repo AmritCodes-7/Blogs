@@ -110,10 +110,11 @@
         font-style: italic;
     }
 </style>
-<script>
 
-    const totalWords = "{{ blog.body|wordcount }}";
-    document.querySelector(".read-time").innerText = Math.ceil(Number(totalWords) / 230); // min
-
-</script>
 {% endblock content %}
+
+{% block script %}
+<script>
+    calculateDisplayWPM("{{ blog.body | wordcount }}")
+</script>
+{% endblock %}
