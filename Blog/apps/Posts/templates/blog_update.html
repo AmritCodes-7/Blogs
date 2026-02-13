@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Edit Story{% endblock title %}
 
@@ -59,12 +60,7 @@
 
             <!-- Title -->
             <div>
-                <input type="text" 
-                       name="title" 
-                       value="{{ blog.title }}"
-                       placeholder="Title" 
-                       required
-                       class="w-full text-4xl md:text-5xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 bg-transparent py-2">
+                {{ form.title }}
                 {% if form.title.errors %}
                     <div class="mt-2 text-red-600 text-sm">
                         {{ form.title.errors.0 }}
@@ -72,9 +68,9 @@
                 {% endif %}
             </div>
 
-            <!-- Summernote Editor -->
+            <!-- CKEditor 5 Body -->
             <div>
-                <textarea name="body" id="summernote">{{ blog.body }}</textarea>
+                {{ form.body }}
                 {% if form.body.errors %}
                     <div class="mt-2 text-red-600 text-sm">
                         {{ form.body.errors.0 }}
@@ -90,108 +86,122 @@
     </div>
 </div>
 
-<!-- jQuery (Required for Summernote) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Summernote CSS -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-
-<!-- Summernote JS -->
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-
+<!-- CKEditor 5 Styles -->
 <style>
-    .note-editor.note-frame {
+    /* CKEditor 5 Custom Styling */
+    .django-ckeditor-5 {
         border: 1px solid #e5e7eb;
         border-radius: 8px;
+        overflow: hidden;
     }
     
-    .note-toolbar {
+    .ck-editor__editable {
+        min-height: 400px;
+        font-size: 18px;
+        line-height: 1.8;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        padding: 20px;
+    }
+    
+    .ck.ck-toolbar {
         background-color: #fafafa;
         border-bottom: 1px solid #e5e7eb;
         padding: 10px;
     }
     
-    .note-editable {
-        font-size: 18px;
-        line-height: 1.8;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        min-height: 400px;
-        padding: 20px;
+    .ck.ck-content {
+        background-color: white;
+    }
+    
+    /* Ensure CKEditor doesn't conflict with Tailwind */
+    .ck-content p {
+        margin-bottom: 1em;
+    }
+    
+    .ck-content h2 {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+    }
+    
+    .ck-content h3 {
+        font-size: 1.25em;
+        font-weight: bold;
+        margin-top: 0.75em;
+        margin-bottom: 0.5em;
     }
 </style>
 
 <script>
-    $(document).ready(function() {
-        $('#summernote').summernote({
-            placeholder: 'Tell your story...',
-            height: 400,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ],
-            callbacks: {
-                onImageUpload: function(files) {
-                    for (let i = 0; i < files.length; i++) {
-                        uploadImage(files[i]);
-                    }
-                },
-                onChange: function(contents, $editable) {
-                    const text = $('#summernote').summernote('code').replace(/<[^>]*>/g, '');
-                    $('#char-count').text(text.length);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Featured Image Upload
+        const uploadTrigger = document.getElementById('upload-trigger');
+        const imageInput = document.getElementById('id_featured_image');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const removeImageBtn = document.getElementById('remove-image');
+
+        if (uploadTrigger && imageInput) {
+            uploadTrigger.addEventListener('click', () => {
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewImg.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        uploadTrigger.classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (removeImageBtn) {
+            removeImageBtn.addEventListener('click', () => {
+                imageInput.value = '';
+                previewImg.src = '';
+                imagePreview.classList.add('hidden');
+                uploadTrigger.classList.remove('hidden');
+            });
+        }
+
+        // Character count for CKEditor
+        // Wait for CKEditor to be ready
+        const checkEditor = setInterval(() => {
+            const editor = document.querySelector('.ck-editor__editable');
+            if (editor) {
+                clearInterval(checkEditor);
+                
+                // Get the CKEditor instance
+                const editorElement = document.querySelector('[name="body"]');
+                if (editorElement && editorElement.ckeditorInstance) {
+                    const ckEditor = editorElement.ckeditorInstance;
+                    
+                    // Update character count on change
+                    ckEditor.model.document.on('change:data', () => {
+                        const data = ckEditor.getData();
+                        const text = data.replace(/<[^>]*>/g, '');
+                        document.getElementById('char-count').textContent = text.length;
+                    });
+                    
+                    // Initial character count
+                    const initialData = ckEditor.getData();
+                    const initialText = initialData.replace(/<[^>]*>/g, '');
+                    document.getElementById('char-count').textContent = initialText.length;
                 }
             }
-        });
-
-        function uploadImage(file) {
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                const image = $('<img>').attr('src', reader.result);
-                $('#summernote').summernote('insertNode', image[0]);
-            }
-            reader.readAsDataURL(file);
-        }
-
-        const initialText = $('#summernote').summernote('code').replace(/<[^>]*>/g, '');
-        $('#char-count').text(initialText.length);
-    });
-
-    // Featured Image Upload
-    const uploadTrigger = document.getElementById('upload-trigger');
-    const imageInput = document.getElementById('featured-image-input');
-    const imagePreview = document.getElementById('image-preview');
-    const previewImg = document.getElementById('preview-img');
-    const removeImageBtn = document.getElementById('remove-image');
-
-    uploadTrigger.addEventListener('click', () => {
-        imageInput.click();
-    });
-
-    imageInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                imagePreview.classList.remove('hidden');
-                uploadTrigger.classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    removeImageBtn.addEventListener('click', () => {
-        imageInput.value = '';
-        previewImg.src = '';
-        imagePreview.classList.add('hidden');
-        uploadTrigger.classList.remove('hidden');
+        }, 100);
+        
+        // Clear interval after 10 seconds to prevent infinite loop
+        setTimeout(() => clearInterval(checkEditor), 10000);
     });
 </script>
+
+{{ form.media }}
+
 {% endblock content %}
