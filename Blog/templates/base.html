@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
+
 <body class="bg-white text-gray-900 min-h-screen">
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
@@ -20,18 +22,12 @@
 
             <!-- Search Bar -->
             <form method="get" action="{% url 'blog_search_page' %}" class="relative w-48 md:w-64 flex-1 mx-4">
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ request.GET.q|default:'' }}"
-                    placeholder="Search..."
-                    class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 text-sm text-gray-800 focus:outline-none focus:border-gray-900 bg-gray-50"
-                />
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search..."
+                    class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 text-sm text-gray-800 focus:outline-none focus:border-gray-900 bg-gray-50" />
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500"
-                     xmlns="http://www.w3.org/2000/svg"
-                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                        d="M21 21l-4.35-4.35M16 10a6 6 0 11-12 0 6 6 0 0112 0z" />
                 </svg>
                 <button type="submit" class="hidden">Search</button>
             </form>
@@ -39,58 +35,66 @@
             <!-- Navigation -->
             <nav class="flex items-center space-x-4 text-sm">
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'blog_create_page' %}" class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors">
+                <a href="{% url 'blog_create_page' %}"
+                    class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>Write</span>
+                </a>
+
+                <!-- Sort Dropdown -->
+                <div class="relative inline-block text-left">
+                    <button id="sortButton"
+                        class="inline-flex items-center space-x-1 text-gray-600 hover:text-gray-900 focus:outline-none text-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
                         </svg>
-                        <span>Write</span>
-                    </a>
-
-                    <!-- Sort Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button id="sortButton"
-                                class="inline-flex items-center space-x-1 text-gray-600 hover:text-gray-900 focus:outline-none text-sm">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
-                            </svg>
-                            <span>{{ request.GET.sort|default:"Sort"|capfirst }}</span>
-                        </button>
-                        <div id="sortMenu"
-                             class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-50">
-                            <div class="py-1">
-                                <a href="?sort=latest" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if request.GET.sort == 'latest' %}bg-gray-100{% endif %}">Latest</a>
-                                <a href="?sort=oldest" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if request.GET.sort == 'oldest' %}bg-gray-100{% endif %}">Oldest</a>
-                            </div>
+                        <span>{{ request.GET.sort|default:"Sort"|capfirst }}</span>
+                    </button>
+                    <div id="sortMenu"
+                        class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-50">
+                        <div class="py-1">
+                            <a href="?sort=latest"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if request.GET.sort == 'latest' %}bg-gray-100{% endif %}">Latest</a>
+                            <a href="?sort=oldest"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {% if request.GET.sort == 'oldest' %}bg-gray-100{% endif %}">Oldest</a>
                         </div>
                     </div>
+                </div>
 
-                    <!-- User Profile Dropdown -->
-                    <div class="relative inline-block text-left">
-                        <button id="profileButton" class="flex items-center space-x-2 focus:outline-none">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
-                                {{ request.user.username|first|upper }}
+                <!-- User Profile Dropdown -->
+                <div class="relative inline-block text-left">
+                    <button id="profileButton" class="flex items-center space-x-2 focus:outline-none">
+                        <div
+                            class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    </button>
+                    <div id="profileMenu"
+                        class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-50">
+                        <div class="py-1">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900">{{ request.user.username }}</p>
+                                <p class="text-xs text-gray-500 truncate">{{ request.user.email }}</p>
                             </div>
-                        </button>
-                        <div id="profileMenu"
-                             class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden z-50">
-                            <div class="py-1">
-                                <div class="px-4 py-3 border-b border-gray-100">
-                                    <p class="text-sm font-medium text-gray-900">{{ request.user.username }}</p>
-                                    <p class="text-xs text-gray-500 truncate">{{ request.user.email }}</p>
-                                </div>
-                                <a href="{% url 'my_blogs_list_page' request.user.username request.user.id %}" 
-                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Your Stories</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
-                                <form method="post" action="{% url 'logout_page' %}" class="border-t border-gray-100">
-                                    {% csrf_token %}
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sign out</button>
-                                </form>
-                            </div>
+                            <a href="{% url 'my_blogs_list_page' request.user.username request.user.id %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Your Stories</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
+                            <form method="post" action="{% url 'logout_page' %}" class="border-t border-gray-100">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sign
+                                    out</button>
+                            </form>
                         </div>
                     </div>
+                </div>
                 {% else %}
-                    <a href="{% url 'login_page' %}" class="text-gray-600 hover:text-gray-900 transition">Sign in</a>
-                    <a href="{% url 'signup_page' %}" class="px-4 py-2 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition">Get started</a>
+                <a href="{% url 'login_page' %}" class="text-gray-600 hover:text-gray-900 transition">Sign in</a>
+                <a href="{% url 'signup_page' %}"
+                    class="px-4 py-2 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition">Get started</a>
                 {% endif %}
             </nav>
         </div>
@@ -115,7 +119,7 @@
 
         profileButton?.addEventListener('click', () => profileMenu.classList.toggle('hidden'));
 
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (!profileButton?.contains(e.target) && !profileMenu?.contains(e.target)) {
                 profileMenu?.classList.add('hidden');
             }
@@ -131,7 +135,7 @@
         }
 
         // Close menus when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.menu-button') && !e.target.closest('.menu-dropdown')) {
                 document.querySelectorAll('.menu-dropdown').forEach(menu => {
                     menu.classList.add('hidden');
@@ -140,4 +144,5 @@
         });
     </script>
 </body>
+
 </html>
