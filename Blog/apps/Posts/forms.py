@@ -1,5 +1,6 @@
 from django import forms
 from .models import Blogs
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 
 class BlogCreateForm(forms.ModelForm):
@@ -9,18 +10,16 @@ class BlogCreateForm(forms.ModelForm):
         widgets = {
             "title": forms.TextInput(
                 attrs={
-                    "class": "w-full text-4xl md:text-5xl font-bold border-none outline-none focus:ring-0 placeholder-gray-300 bg-transparent py-2",
+                    "class": "w-full text-4xl md:text-5xl font-bold border-none outline-none focus:ring-0 bg-transparent",
                     "placeholder": "Title",
-                    "autocomplete": "off",
                 }
             ),
-            # CKEditor5Field provides its own widget
+            "body": CKEditor5Widget(
+                attrs={"class": "ckeditor-field"},
+                config_name="extends",
+            ),
             "featured_image": forms.FileInput(
-                attrs={
-                    "class": "hidden",
-                    "id": "featured-image-input",
-                    "accept": "image/*",
-                }
+                attrs={"class": "hidden", "accept": "image/*"}
             ),
         }
 
