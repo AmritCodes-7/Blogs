@@ -74,7 +74,7 @@ class ReadList(models.Model):
         ordering = ["-created_at"]
         verbose_name = "Reading List"
         verbose_name_plural = "Reading Lists"
-        unique = ["user", "title"]
+        unique_together = ["user", "title"]
         indexes = [
             models.Index(fields=["user", "-created_at"]),
             models.Index(fields=["slug"]),
