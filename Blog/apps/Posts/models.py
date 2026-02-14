@@ -92,4 +92,30 @@ class ReadList(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.title
+        return f"{self.user.username} by {self.title}"
+
+
+class ReadListItem(models.Model):
+    readlist = models.ForeignKey(
+        ReadList, on_delete=models.CASCADE, related_name="items"
+    )
+    blog = models.ForeignKey(
+        Blogs, on_delete=models.CASCADE, related_name="saved_in_lists"
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=True)
+    position = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "ReadListItem"
+        verbose_name_plural = "ReadListItems"
+        ordering = ["position", "-added_at"]
+        unique_together = ["readlist", "blog"]
+        indexes = [
+            models.Index(fields=["readlist", "position"]),
+            models.Index(fields=["readlist", "is_read"]),
+        ]
+
+    def __str__(self):
+        return f"{self.blog.title} in {self.readlist.title}"
+
