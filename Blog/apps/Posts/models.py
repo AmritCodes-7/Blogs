@@ -62,8 +62,8 @@ class ReadList(models.Model):
         null=True,
         help_text="Describe what this reading list is about",
     )
-    created_at = models.DateTimeField(auto_now_add=False)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True, max_length=150)
     is_public = models.BooleanField(
         default=False,
