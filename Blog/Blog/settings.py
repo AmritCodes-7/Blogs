@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "apps.Posts",
     "apps.accounts",
     "django_ckeditor_5",
+    "apps.readlist",
 ]
 
 MIDDLEWARE = [

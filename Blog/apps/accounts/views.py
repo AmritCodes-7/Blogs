@@ -5,12 +5,13 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
-from apps.Posts.models import ReadList
+from apps.readlist.models import ReadList
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
 
 User = get_user_model()
+
 
 # Create your views here.
 class UserLoginView(LoginView):
@@ -60,9 +61,9 @@ class UserSignUpView(CreateView):
 
         # creating new readlist for each user while registering
         ReadList.objects.create(
-            user = user,
-            title = "Saved Blogs",
-            description = "Collections of your liked or readlist",
+            user=user,
+            title="Saved Blogs",
+            description="Collections of your liked or readlist",
         )
 
         return response

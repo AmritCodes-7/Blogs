@@ -9,7 +9,6 @@ from django.views.generic import (
 )
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from .models import Blogs, PublishedStatus
 from .forms import BlogCreateForm
 
