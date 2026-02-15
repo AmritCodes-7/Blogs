@@ -103,7 +103,7 @@ class ReadListItem(models.Model):
         Blogs, on_delete=models.CASCADE, related_name="saved_in_lists"
     )
     added_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=True)
+    is_read = models.BooleanField(default=False)
     position = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -118,4 +118,3 @@ class ReadListItem(models.Model):
 
     def __str__(self):
         return f"{self.blog.title} in {self.readlist.title}"
-

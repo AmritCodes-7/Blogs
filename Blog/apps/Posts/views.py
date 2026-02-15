@@ -39,7 +39,9 @@ class BlogSortMixin:
         Base queryset with author prefetching.
         Override in subclasses if needed.
         """
-        return Blogs.objects.select_related("author").filter(publish_status=PublishedStatus.PUBLISHED)
+        return Blogs.objects.select_related("author").filter(
+            publish_status=PublishedStatus.PUBLISHED
+        )
 
 
 # ----------------- Home / Blog List -----------------
@@ -134,8 +136,7 @@ class SearchView(BlogSortMixin, ListView):
 
     def base_queryset(self):
         qs = Blogs.objects.select_related("author")
-        query = self.request.GET.get("q", "")
-        if query:
+        if query := self.request.GET.get("q", ""):
             qs = qs.filter(Q(title__icontains=query) | Q(body__icontains=query))
         return qs
 
